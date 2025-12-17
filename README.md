@@ -164,7 +164,7 @@ Structured JSON
 
 Human-readable recommendation summary
 
-📁 Project Structure
+###📁 Project Structure
 shl-reco-engine/
 │
 ├── src/
