@@ -163,8 +163,7 @@ Returns:
 Structured JSON
 
 Human-readable recommendation summary
-
-###📁 Project Structure
+###Structure
 shl-reco-engine/
 │
 ├── src/
@@ -179,6 +178,7 @@ shl-reco-engine/
 │
 ├── SHL_Assessment_Recommendation_Engine_Notebook.ipynb
 └── README.md
+
 
 ▶️ How to Run Locally
 1️⃣ Install Dependencies
