@@ -1,63 +1,138 @@
-# SHL Assessment Recommendation Engine
+SHL Assessment Recommendation Engine
+📌 Overview
 
-## Overview
 This project implements an intelligent Assessment Recommendation Engine using SHL’s product catalog.
-The system recommends the most relevant assessments based on a job description, required skills, and role intent.
 
-It is designed to be:
-- Explainable
-- Scalable
-- Domain-aware (AI, tech, leadership, entry-level roles)
+The system recommends the most relevant SHL assessments for a given job role or hiring query by combining:
 
----
+Semantic search (ML-based retrieval)
 
-## Approach
+Domain-aware rule-based re-ranking
 
-### 1. Retrieval (Semantic Search)
-- SentenceTransformer (`all-MiniLM-L6-v2`) generates embeddings for assessment descriptions.
-- FAISS is used for fast nearest-neighbor similarity search.
+The solution was further used to generate recommendations for the provided Excel dataset, as required in the assignment.
 
-### 2. Rule-Based Re-ranking
-A domain-aware `rule_boost` function adjusts rankings based on:
-- Role intent (AI / Tech / Leadership / Language)
-- Skill relevance
-- Job level alignment
-- Penalization of irrelevant assessments
+Key properties:
 
-This hybrid approach ensures:
-- Strong relevance
-- Reduced noise
-- Human-interpretable decisions
+✅ Explainable
 
----
+✅ Scalable
 
-## API Endpoints
+✅ Domain-aware (AI, Tech, Leadership, Entry-level roles)
 
-### Health Check
+✅ Suitable for real-world hiring workflows
+
+🧠 What We Built
+
+We built a hybrid recommendation system that:
+
+Understands job descriptions semantically
+
+Matches them against SHL assessments
+
+Applies intelligent business rules to improve ranking quality
+
+The system exposes a FastAPI-based REST API that can be used interactively or programmatically.
+
+🧩 High-Level Architecture
+
+Input (Job Description / Query)
+⬇
+Sentence Embeddings (SentenceTransformer)
+⬇
+FAISS Vector Search (Top-K similar assessments)
+⬇
+Rule-Based Boosting & Penalization
+⬇
+Final Ranked SHL Assessment Recommendations
+
+⚙️ Approach
+1️⃣ Retrieval (Semantic Search)
+
+Used SentenceTransformer (all-MiniLM-L6-v2) to generate embeddings for:
+
+SHL assessment descriptions
+
+Incoming job queries
+
+Used FAISS for fast cosine-similarity-based nearest neighbor search
+
+This ensures:
+
+Robust semantic matching
+
+No keyword dependency
+
+Good performance at scale
+
+2️⃣ Rule-Based Re-ranking (Domain Intelligence)
+
+A custom rule_boost function adjusts rankings based on:
+
+Role Intent
+
+AI / ML / Research
+
+Software Engineering
+
+Leadership / Managerial
+
+Language / Communication
+
+Skill relevance
+
+Job level alignment
+
+Penalization of irrelevant assessments
+
+Business skills for technical roles
+
+Senior-level tests for intern roles
+
+Language tests unless explicitly requested
+
+This hybrid ML + rules approach ensures:
+
+High precision
+
+Reduced noise
+
+Human-interpretable decisions
+
+📊 Excel Dataset Usage (Assignment Requirement)
+
+The provided Excel dataset contained hiring queries.
+
+What we did:
+
+Loaded each query from the Excel file
+
+Sent it to the /recommend API endpoint
+
+Generated Top-K SHL assessment recommendations
+
+Collected results in tabular form:
+
+Query
+
+Recommended Assessment URLs
+
+➡️ The Excel file was used as input, while the recommendation engine was already built and reusable.
+
+🚀 API Endpoints
+🔹 Health Check
+GET /health
 
 
-### Recommend Assessments
+Response:
 
-### Structure
-shl-reco-engine/
-│
-├── src/
-│   ├── api.py                  
-│   ├── build_index.py          
-│   └── __pycache__/            
-│       └── api.cpython-311
-│
-├── data/
-│   ├── catalog.csv             
-│   ├── catalog.pkl             
-│   └── catalog.index           
-│
-├── SHL_Assessment_Recommendation_Engine_Notebook.ipynb
-└── README.md
-       
+{
+  "status": "ok"
+}
 
-#### Sample Input
-```json
+🔹 Recommend Assessments
+POST /recommend
+
+Sample Input
 {
   "job_title": "Research AI Intern",
   "job_description": "Building ML and NLP pipelines",
@@ -65,15 +140,60 @@ shl-reco-engine/
   "top_k": 5
 }
 
-#### How to Run Locally
+Sample Output
+{
+  "query": "Research AI Intern Building ML and NLP pipelines Python Machine Learning NLP Statistics",
+  "results": [
+    {
+      "rank": 1,
+      "assessment_id": "A008",
+      "name": "Technical Skills Assessments",
+      "url": "https://www.shl.com/products/assessments/skills-and-simulations/technical-skills/",
+      "score": 1.91
+    }
+  ]
+}
+
+🔹 Pretty Output (Readable Summary)
+POST /recommend/pretty
+
+
+Returns:
+
+Structured JSON
+
+Human-readable recommendation summary
+
+📁 Project Structure
+shl-reco-engine/
+│
+├── src/
+│   ├── api.py                  # FastAPI application
+│   ├── build_index.py          # FAISS index + embeddings builder
+│   └── __pycache__/
+│
+├── data/
+│   ├── catalog.csv             # Raw SHL assessment catalog
+│   ├── catalog.pkl             # Metadata used by API
+│   └── catalog.index           # FAISS vector index
+│
+├── SHL_Assessment_Recommendation_Engine_Notebook.ipynb
+└── README.md
+
+▶️ How to Run Locally
+1️⃣ Install Dependencies
 pip install fastapi uvicorn sentence-transformers faiss-cpu pandas numpy
+
+2️⃣ Start API Server
 python -m uvicorn src.api:app --reload
-open:
+
+3️⃣ Open Swagger UI
 http://127.0.0.1:8000/docs
 
 
-Use this input:
-```json
+Use the API interactively to test recommendations.
+
+🧪 Example Usage
 {
   "job_title": "Research AI Intern",
   "job_description": "ML, NLP, experimentation",
